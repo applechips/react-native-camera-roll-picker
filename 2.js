@@ -8,6 +8,37 @@ var ImagePicker = require('react-native-image-picker');
 
 
 export default class CameraRollPicker extends Component {
+/*
+* The first arg is the options object for customization (it can also be null or omitted for default options),
+* The second arg is the callback which sends object: response (more info below in README)
+*/
+chooseImage(){
+  ImagePicker.showImagePicker({noData: true }, (response) => {
+    // callback response
+    console.log('Response = ', response);
+
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+    }
+    else if (response.error) {
+      console.log('ImagePicker Error: ', response.error);
+    }
+    else if (response.customButton) {
+      console.log('User tapped custom button: ', response.customButton);
+    } else {
+      //If it is iOS, remove 'file://' prefix
+      let source = {uri: response.uri.replace('file://', ''), isStatic: true};
+
+      //If android, don't need to remove the 'file://'' prefix
+      if (Platform.OS === 'android') {
+        source = {uri: response.uri, isStatic: true};
+      }
+
+      this.setState({image: source});
+    }
+  });
+}
+
   render() {
     return (
       <View style={{flex: 1}}>
